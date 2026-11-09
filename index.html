@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Código de Ética y Conducta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#0f1d17; --bg-2:#06100c;
+    --ink:#eef4f0; --ink-soft:rgba(238,244,240,.62);
+    --accent:#3fbf6f; --accent-2:#1f6fbf;
+    --glass:rgba(255,255,255,.06); --glass-line:rgba(255,255,255,.12);
+    --page-w:612; --page-h:792;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 700px at 50% 40%, #1d3a2c 0%, transparent 60%),
+      radial-gradient(900px 600px at 85% 110%, rgba(31,111,191,.22), transparent 60%),
+      linear-gradient(160deg,var(--bg-1),var(--bg-2));
+    color:var(--ink);
+    font-family:Inter,system-ui,sans-serif;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Escenario ---------- */
+  .stage{
+    position:fixed; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:72px 16px 96px;
+  }
+  header.top{
+    position:fixed; top:0; left:0; right:0; height:64px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px; z-index:20;
+  }
+  .brand{display:flex; flex-direction:column; line-height:1.15}
+  .brand small{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent)}
+  .brand strong{font-family:Fraunces,serif; font-weight:500; font-size:18px}
+
+  .book-wrap{
+    position:relative;
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    perspective:2400px;
+  }
+  .book-shift{
+    /* ancho de dos páginas que quepa a lo alto de la ventana */
+    width:min(100%, calc((100vh - 180px) * 612 / 792 * 2), 1640px);
+    transition:transform 1s cubic-bezier(.65,0,.25,1);
+    will-change:transform;
+    filter:drop-shadow(0 30px 40px rgba(0,0,0,.55)) drop-shadow(0 8px 12px rgba(0,0,0,.35));
+  }
+  .book-shift.is-front{transform:translateX(-25%)}
+  .book-shift.is-back{transform:translateX(25%)}
+  .book-shift.portrait{transform:none !important}
+
+  /* Entrada inicial */
+  .intro .book-shift{opacity:0; transform:translateX(-25%) translateY(30px) rotateX(18deg) scale(.92)}
+  .book-shift{transition:transform 1s cubic-bezier(.65,0,.25,1), opacity .9s ease}
+
+  #book{margin:0 auto}
+
+  /* ---------- Páginas ---------- */
+  .page{
+    background:#fdfcf8;
+    overflow:hidden;
+  }
+  .page .content{
+    position:absolute; inset:0;
+  }
+  .page img.scan{
+    width:100%; height:100%; object-fit:contain; display:block;
+    user-select:none; -webkit-user-drag:none; pointer-events:none;
+  }
+  /* Sombra del lomo sobre cada hoja */
+  .page.--left .content::after,
+  .page.--right .content::after{
+    content:""; position:absolute; top:0; bottom:0; width:12%; pointer-events:none;
+  }
+  .page.--left .content::after{
+    right:0; background:linear-gradient(to left, rgba(0,0,0,.18), rgba(0,0,0,.05) 35%, transparent);
+  }
+  .page.--right .content::after{
+    left:0; background:linear-gradient(to right, rgba(0,0,0,.20), rgba(0,0,0,.05) 35%, transparent);
+  }
+  /* Textura sutil de papel */
+  .page .content::before{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:1; mix-blend-mode:multiply; opacity:.5;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(120,100,60,.05), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(120,100,60,.06), transparent 45%);
+  }
+
+  /* ---------- Cubiertas (hard) ---------- */
+  .page.cover{background:#123326}
+  .cover .content{display:flex; align-items:center; justify-content:center}
+  .cover img.cover-img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none;
+  }
+  .cover.has-img img.cover-img{display:block}
+  .cover.has-img .placeholder{display:none}
+  .placeholder{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+    text-align:center; padding:12%;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,.06), transparent 40%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 14px, transparent 14px 28px),
+      linear-gradient(160deg,#17402f,#0b241a);
+    color:rgba(255,255,255,.85);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .placeholder .frame{
+    position:absolute; inset:5%; border:1.5px dashed rgba(255,255,255,.28); border-radius:6px;
+  }
+  .placeholder .ico{width:44px; height:44px; opacity:.7}
+  .placeholder h2{font-family:Fraunces,serif; font-weight:700; font-size:clamp(14px,2.2vw,26px); line-height:1.15}
+  .placeholder p{font-size:clamp(9px,1vw,12px); color:rgba(255,255,255,.6); letter-spacing:.04em}
+  .placeholder code{font-size:clamp(9px,1vw,12px); background:rgba(0,0,0,.25); padding:3px 8px; border-radius:4px; color:#a8e6bf}
+  /* Brillo y lomo en la cubierta */
+  .cover .content::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(105deg, rgba(255,255,255,.14) 0%, transparent 18%, transparent 75%, rgba(0,0,0,.18));
+  }
+  .cover.front .content::before{
+    content:""; position:absolute; top:0; bottom:0; left:0; width:5%; z-index:2; opacity:1; mix-blend-mode:normal;
+    background:linear-gradient(to right, rgba(0,0,0,.35), rgba(255,255,255,.08) 55%, transparent);
+  }
+  .cover.back .content::before{
+    content:""; position:absolute; top:0; bottom:0; right:0; left:auto; width:5%; z-index:2; opacity:1; mix-blend-mode:normal;
+    background:linear-gradient(to left, rgba(0,0,0,.35), rgba(255,255,255,.08) 55%, transparent);
+  }
+  /* Guardas (interior de cubiertas) */
+  .page.endpaper .content{
+    background:
+      radial-gradient(circle at 30% 30%, rgba(63,191,111,.10), transparent 50%),
+      linear-gradient(160deg,#eef3ee,#dfe8e1);
+  }
+  .endpaper .mark{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:Fraunces,serif; color:rgba(18,51,38,.25); font-size:clamp(12px,1.6vw,20px); letter-spacing:.3em; text-transform:uppercase;
+  }
+
+  /* ---------- Controles ---------- */
+  .controls{
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+    display:flex; align-items:center; gap:6px;
+    padding:6px; border-radius:999px;
+    background:var(--glass); border:1px solid var(--glass-line);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    z-index:30;
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .btn{
+    width:42px; height:42px; border-radius:50%;
+    display:grid; place-items:center;
+    background:transparent; color:var(--ink); border:0; cursor:pointer;
+    transition:background .25s ease, transform .2s ease, color .25s;
+  }
+  .btn:hover{background:rgba(255,255,255,.1)}
+  .btn:active{transform:scale(.92)}
+  .btn:disabled{opacity:.3; cursor:default; background:transparent}
+  .btn svg{width:20px; height:20px}
+  .btn.on{color:var(--accent)}
+  .counter{
+    min-width:120px; text-align:center; font-variant-numeric:tabular-nums;
+    font-size:13px; color:var(--ink-soft); padding:0 8px;
+  }
+  .counter b{color:var(--ink); font-weight:600}
+  .sep{width:1px; height:22px; background:var(--glass-line); margin:0 4px}
+
+  /* Barra de progreso */
+  .progress{
+    position:fixed; left:0; right:0; top:0; height:3px; z-index:30; background:rgba(255,255,255,.05);
+  }
+  .progress i{
+    display:block; height:100%; width:0;
+    background:linear-gradient(90deg,var(--accent-2),var(--accent));
+    transition:width .9s cubic-bezier(.65,0,.25,1);
+    box-shadow:0 0 12px rgba(63,191,111,.6);
+  }
+
+  /* Miniaturas */
+  .thumbs{
+    position:fixed; left:16px; right:16px; bottom:84px; z-index:25;
+    padding:14px; border-radius:14px;
+    background:rgba(4,10,8,.88); border:1px solid var(--glass-line);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    display:flex; gap:12px; overflow-x:auto; scroll-behavior:smooth;
+    transform:translateY(100%); opacity:0; pointer-events:none;
+    transition:transform .55s cubic-bezier(.65,0,.25,1), opacity .4s ease;
+  }
+  .thumbs:not(.open){transform:translateY(24px)}
+  .thumbs.open{transform:none; opacity:1; pointer-events:auto}
+  .thumbs::-webkit-scrollbar{height:6px}
+  .thumbs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2); border-radius:3px}
+  .thumbs button{
+    flex:0 0 auto; width:74px; aspect-ratio:612/792; border:2px solid transparent; border-radius:4px;
+    overflow:hidden; cursor:pointer; background:#fff; position:relative; padding:0;
+    transition:transform .25s ease, border-color .25s ease;
+  }
+  .thumbs button:hover{transform:translateY(-4px)}
+  .thumbs button.active{border-color:var(--accent)}
+  .thumbs button img{width:100%; height:100%; object-fit:cover; display:block}
+  .thumbs button span{
+    position:absolute; bottom:0; left:0; right:0; font-size:10px; padding:2px; text-align:center;
+    background:rgba(0,0,0,.6); color:#fff;
+  }
+  .thumbs button.cv{background:#17402f}
+
+  .hint{
+    position:fixed; top:72px; left:50%; transform:translateX(-50%);
+    font-size:12px; color:var(--ink-soft); letter-spacing:.04em;
+    transition:opacity .8s ease; pointer-events:none; z-index:15; text-align:center;
+  }
+  .hint.hide{opacity:0}
+
+  .loader{
+    position:fixed; inset:0; display:grid; place-items:center; z-index:50;
+    background:var(--bg-2); transition:opacity .6s ease, visibility .6s;
+  }
+  .loader.done{opacity:0; visibility:hidden}
+  .loader .ring{
+    width:46px; height:46px; border-radius:50%;
+    border:3px solid rgba(255,255,255,.12); border-top-color:var(--accent);
+    animation:spin 1s linear infinite;
+  }
+  .loader p{margin-top:14px; font-size:12px; color:var(--ink-soft); text-align:center}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media (max-width:640px){
+    header.top{padding:0 16px}
+    .brand strong{font-size:15px}
+    .stage{padding:64px 16px 90px}
+    .counter{min-width:84px; font-size:12px}
+    .btn{width:38px; height:38px}
+    .hide-sm{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .book-shift,.progress i,.thumbs{transition:none}
+  }
+</style>
+</head>
+<body class="intro">
+
+<div class="loader" id="loader"><div><div class="ring" style="margin:0 auto"></div><p>Preparando el libro…</p></div></div>
+<div class="progress"><i id="bar"></i></div>
+
+<header class="top">
+  <div class="brand">
+    <small>Vive Energía</small>
+    <strong>Código de Ética y Conducta</strong>
+  </div>
+  <button class="btn" id="btnFull" title="Pantalla completa (F)" aria-label="Pantalla completa">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+  </button>
+</header>
+
+<div class="hint" id="hint">Haz clic o arrastra la esquina de la página para pasar · también puedes usar ← →</div>
+
+<main class="stage">
+  <div class="book-wrap">
+    <div class="book-shift is-front" id="shift">
+      <div id="book"></div>
+    </div>
+  </div>
+</main>
+
+<nav class="thumbs" id="thumbs" aria-label="Miniaturas"></nav>
+
+<div class="controls" id="controls">
+  <button class="btn" id="btnFirst" title="Portada (Inicio)" aria-label="Ir a la portada">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 17l-5-5 5-5M11 17l-5-5 5-5"/></svg>
+  </button>
+  <button class="btn" id="btnPrev" title="Anterior (←)" aria-label="Página anterior">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="counter" id="counter">Portada</div>
+  <button class="btn" id="btnNext" title="Siguiente (→)" aria-label="Página siguiente">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <button class="btn" id="btnLast" title="Contraportada (Fin)" aria-label="Ir a la contraportada">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17l5-5-5-5M13 17l5-5-5-5"/></svg>
+  </button>
+  <span class="sep hide-sm"></span>
+  <button class="btn" id="btnThumbs" title="Miniaturas (M)" aria-label="Mostrar miniaturas">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="9" rx="1"/><rect x="3" y="15" width="18" height="6" rx="1"/></svg>
+  </button>
+  <button class="btn on hide-sm" id="btnSound" title="Sonido (S)" aria-label="Activar o desactivar sonido">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path class="wave" d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></svg>
+  </button>
+</div>
+
+<script src="lib/page-flip.browser.js"></script>
+<script>
+(function(){
+  /* ============ CONFIGURACIÓN ============ */
+  const TOTAL_PAGINAS = 27;
+  const RUTA_PAGINAS  = n => `paginas/pagina-${String(n).padStart(2,'0')}.jpg`;
+  const PORTADA       = 'portada.png';        // coloca aquí la imagen de la portada
+  const CONTRAPORTADA = 'contraportada.png';  // coloca aquí la imagen de la cubierta trasera
+  /* ======================================= */
+
+  const book = document.getElementById('book');
+  const pages = [];   // {el, label, thumb}
+
+  const icoImg = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>';
+
+  function cover(kind){
+    const el = document.createElement('div');
+    el.className = `page cover ${kind}`;
+    el.dataset.density = 'hard';
+    const file = kind === 'front' ? PORTADA : CONTRAPORTADA;
+    const title = kind === 'front' ? 'Espacio para la portada' : 'Espacio para la cubierta trasera';
+    el.innerHTML = `<div class="content">
+        <img class="cover-img" alt="${kind==='front'?'Portada':'Contraportada'}">
+        <div class="placeholder"><div class="frame"></div>${icoImg}
+          <h2>${title}</h2>
+          <p>Proporción carta · 612 × 792</p>
+          <code>Libro/${file}</code>
+        </div></div>`;
+    const img = el.querySelector('img');
+    img.onload = () => el.classList.add('has-img');
+    img.src = file;
+    return {el, label: kind==='front' ? 'Portada' : 'Contraportada', thumb: file, isCover:true};
+  }
+  function endpaper(){
+    const el = document.createElement('div');
+    el.className = 'page endpaper';
+    el.dataset.density = 'hard';
+    el.innerHTML = '<div class="content"><div class="mark">Vive Energía</div></div>';
+    return {el, label:'', thumb:null};
+  }
+  function scan(n){
+    const el = document.createElement('div');
+    el.className = 'page';
+    el.innerHTML = `<div class="content"><img class="scan" alt="Página ${n}" src="${RUTA_PAGINAS(n)}" ${n>4?'loading="lazy"':''}></div>`;
+    return {el, label:`Página ${n}`, thumb: RUTA_PAGINAS(n), n};
+  }
+
+  // Estructura: portada · guarda · 1..27 · guarda · contraportada
+  pages.push(cover('front'));
+  pages.push(endpaper());
+  for(let i=1;i<=TOTAL_PAGINAS;i++) pages.push(scan(i));
+  // El total debe ser par para que la contraportada quede sola a la izquierda
+  if ((pages.length + 1) % 2 !== 0) pages.push(endpaper());
+  pages.push(cover('back'));
+  pages.forEach(p => book.appendChild(p.el));
+
+  const pageFlip = new St.PageFlip(book, {
+    width: 612, height: 792,
+    size: 'stretch',
+    minWidth: 240, maxWidth: 820,
+    minHeight: 310, maxHeight: 1060,
+    showCover: true,
+    usePortrait: true,
+    drawShadow: true,
+    maxShadowOpacity: 0.55,
+    flippingTime: 1000,
+    mobileScrollSupport: false,
+    swipeDistance: 30,
+    startZIndex: 2,
+    autoSize: true,
+    showPageCorners: true,
+    disableFlipByClick: false
+  });
+  pageFlip.loadFromHTML(document.querySelectorAll('#book .page'));
+
+  /* ---------- UI ---------- */
+  const shift = document.getElementById('shift');
+  const counter = document.getElementById('counter');
+  const bar = document.getElementById('bar');
+  const btn = id => document.getElementById(id);
+  const last = pages.length - 1;
+
+  function labelFor(i){
+    const p = pages[i];
+    return p && p.n ? p.n : null;
+  }
+  function update(idx){
+    const portrait = pageFlip.getOrientation() === 'portrait';
+    shift.classList.toggle('portrait', portrait);
+    shift.classList.toggle('is-front', idx === 0);
+    shift.classList.toggle('is-back', idx >= last && !portrait);
+
+    let txt;
+    if (idx === 0) txt = 'Portada';
+    else if (idx >= last) txt = 'Contraportada';
+    else {
+      const nums = portrait ? [labelFor(idx)] : [labelFor(idx), labelFor(idx+1)];
+      const v = nums.filter(Boolean);
+      txt = v.length ? `<b>${v.join('–')}</b> / ${TOTAL_PAGINAS}` : 'Guardas';
+    }
+    counter.innerHTML = txt;
+    bar.style.width = (idx / last * 100) + '%';
+    btn('btnPrev').disabled = btn('btnFirst').disabled = idx === 0;
+    btn('btnNext').disabled = btn('btnLast').disabled = idx >= last;
+    document.querySelectorAll('.thumbs button').forEach(b => {
+      const t = +b.dataset.i;
+      b.classList.toggle('active', portrait ? t === idx : (t === idx || t === idx+1));
+    });
+  }
+
+  pageFlip.on('flip', e => update(e.data));
+  pageFlip.on('changeOrientation', () => update(pageFlip.getCurrentPageIndex()));
+  pageFlip.on('changeState', e => {
+    if (e.data === 'flipping' || e.data === 'user_fold') hideHint();
+    if (e.data === 'flipping') playFlip();
+  });
+
+  btn('btnPrev').onclick  = () => pageFlip.flipPrev('top');
+  btn('btnNext').onclick  = () => pageFlip.flipNext('top');
+  btn('btnFirst').onclick = () => goTo(0);
+  btn('btnLast').onclick  = () => goTo(last);
+
+  function goTo(i){
+    if (i !== pageFlip.getCurrentPageIndex()) pageFlip.flip(i, 'top');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); pageFlip.flipNext('top'); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); pageFlip.flipPrev('top'); }
+    else if (e.key === 'Home') goTo(0);
+    else if (e.key === 'End') goTo(last);
+    else if (e.key.toLowerCase() === 'm') toggleThumbs();
+    else if (e.key.toLowerCase() === 'f') toggleFull();
+    else if (e.key.toLowerCase() === 's') toggleSound();
+    else if (e.key === 'Escape') thumbs.classList.remove('open');
+  });
+
+  // Rueda del ratón (con freno)
+  let wheelLock = 0;
+  window.addEventListener('wheel', e => {
+    if (thumbs.classList.contains('open')) return;
+    const now = Date.now(); if (now < wheelLock) return;
+    if (Math.abs(e.deltaY) < 20 && Math.abs(e.deltaX) < 20) return;
+    wheelLock = now + 900;
+    (e.deltaY > 0 || e.deltaX > 0) ? pageFlip.flipNext('top') : pageFlip.flipPrev('top');
+  }, {passive:true});
+
+  /* ---------- Miniaturas ---------- */
+  const thumbs = document.getElementById('thumbs');
+  pages.forEach((p, i) => {
+    if (!p.thumb) return;
+    const b = document.createElement('button');
+    b.dataset.i = i;
+    if (p.isCover) {
+      b.className = 'cv';
+      b.innerHTML = `<img src="${p.thumb}" alt="" onerror="this.remove()"><span>${p.label}</span>`;
+    } else {
+      b.innerHTML = `<img src="${p.thumb}" alt="" loading="lazy"><span>${p.n}</span>`;
+    }
+    b.onclick = () => { goTo(i); };
+    thumbs.appendChild(b);
+  });
+  function toggleThumbs(){
+    thumbs.classList.toggle('open');
+    btn('btnThumbs').classList.toggle('on', thumbs.classList.contains('open'));
+    const a = thumbs.querySelector('.active');
+    if (a) a.scrollIntoView({inline:'center', block:'nearest'});
+  }
+  btn('btnThumbs').onclick = toggleThumbs;
+
+  /* ---------- Pantalla completa ---------- */
+  function toggleFull(){
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+  btn('btnFull').onclick = toggleFull;
+
+  /* ---------- Sonido de página (sintetizado, sin archivos) ---------- */
+  let soundOn = true, actx = null;
+  function toggleSound(){
+    soundOn = !soundOn;
+    btn('btnSound').classList.toggle('on', soundOn);
+    btn('btnSound').querySelector('.wave').style.opacity = soundOn ? 1 : 0;
+  }
+  btn('btnSound').onclick = toggleSound;
+  function playFlip(){
+    if (!soundOn) return;
+    try{
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const dur = 0.55, sr = actx.sampleRate, len = Math.floor(sr*dur);
+      const buf = actx.createBuffer(1, len, sr), d = buf.getChannelData(0);
+      for (let i=0;i<len;i++){
+        const t = i/len;
+        const env = Math.pow(Math.sin(Math.PI*Math.min(1,t*1.15)), 1.6) * (1 - t*.4);
+        d[i] = (Math.random()*2-1) * env * (0.6 + 0.4*Math.sin(t*38));
+      }
+      const src = actx.createBufferSource(); src.buffer = buf;
+      const bp = actx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value = 2400; bp.Q.value = .6;
+      const hp = actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value = 600;
+      const g = actx.createGain(); g.gain.value = 0.18;
+      src.connect(bp).connect(hp).connect(g).connect(actx.destination);
+      src.start();
+    }catch(_){}
+  }
+
+  /* ---------- Pista / arranque ---------- */
+  const hint = document.getElementById('hint');
+  function hideHint(){ hint.classList.add('hide'); }
+  setTimeout(hideHint, 7000);
+
+  function start(){
+    document.getElementById('loader').classList.add('done');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.body.classList.remove('intro');
+      update(pageFlip.getCurrentPageIndex());
+    }));
+  }
+  const first = document.querySelector('img.scan');
+  if (first.complete) setTimeout(start, 300); else { first.onload = first.onerror = () => setTimeout(start, 300); }
+  setTimeout(start, 4000);
+})();
+</script>
+</body>
+</html>
